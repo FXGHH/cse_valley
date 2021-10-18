@@ -46,6 +46,13 @@ void initialise_land(struct land farm_land[LAND_SIZE][LAND_SIZE]);
 void print_top_row(struct land farm_land[LAND_SIZE][LAND_SIZE], int row);
 void print_farmer_row(struct land farm_land[LAND_SIZE][LAND_SIZE],
                       struct farmer cse_farmer);
+void square_watering (int wat_size, struct farmer cse_farmer,
+                      struct land farm_land[LAND_SIZE][LAND_SIZE]);
+void next_day (struct seeds seed_collection[MAX_NUM_SEED_TYPES],
+               struct land farm_land[LAND_SIZE][LAND_SIZE]);
+void harvest (struct seeds seed_collection[MAX_NUM_SEED_TYPES],
+              struct land farm_land[LAND_SIZE][LAND_SIZE],
+              struct farmer cse_farmer);
 
 int main(void) {
 
@@ -85,6 +92,7 @@ int main(void) {
     printf("Game Started!\n");
     printf("Enter command: ");
     char cmd_loop;
+    int day_loop = 2;
     while (scanf(" %c", &cmd_loop) != EOF) {
     // TODO: When you start stage 1.2, you will need to replace the below
     // with a loop that reads and executes commands until EOF.
@@ -293,21 +301,40 @@ int main(void) {
                     printf("  You cannot scatter seeds ^ or <\n");
                 }
 
-            }s
+            }
 ////////////////////////// below can Square Watering ////////////////////
-        }else if (cmd_loop == 'w') {
-            int square_size;
-            scanf(" %d", &square_size);
+        } else if (cmd_loop == 'w') {
+
+            int wat_size;
+            scanf(" %d", &wat_size);
+            square_watering (wat_size, cse_farmer, farm_land);
+
+        } else if (cmd_loop == 'n') {
+
+            printf("  Advancing to the next day... Day %d, let's go!\n", day_loop);
+            next_day (seed_collection, farm_land);
+            cse_farmer = initialise_farmer(cse_farmer);
+            day_loop++;
+
+        } else if (cmd_loop == 'h') {
+
+            harvest (seed_collection, farm_land, cse_farmer);
+
+        } else if (cmd_loop == 't') {
+
+            char src_name;
+            int src_amt;
+            char dst_name;
+            scanf(" %c", &src_name);
+            scanf(" %d", &src_amt);
+            scanf(" %d", &dst_name);
 
         }
 
 
-
         printf("Enter command: ");
 
-    // print_land(farm_land, cse_farmer);
   }
-
     return 0;
 }
 
@@ -321,6 +348,155 @@ int main(void) {
 //
 //
 // }
+
+void trade (struct seeds seed_collection[MAX_NUM_SEED_TYPES],
+            char src_name, int src_amt, char dst_name) {
+    int i = 0;
+
+    while (i < MAX_NUM_SEED_TYPES && ) {
+        if (src_name == seed_collection[i].name) {
+            int k = 1;
+        } else {
+            k = 0;
+        }
+        if (k = 0) {
+
+            printf("  You don't have the seeds to be traded\n");
+
+        } else if () {
+
+        }
+        i++;
+    }
+}
+
+
+
+void harvest (struct seeds seed_collection[MAX_NUM_SEED_TYPES],
+              struct land farm_land[LAND_SIZE][LAND_SIZE],
+              struct farmer cse_farmer) {
+
+    char p_name;
+    char se_name;
+    int i = 0;
+    if (cse_farmer.curr_dir == '>' &&
+        cse_farmer.curr_col != LAND_SIZE - 1) {
+
+        p_name = farm_land[cse_farmer.curr_row][cse_farmer.curr_col + 1].seed_name;
+        if (p_name < 'a' && p_name != NO_SEED) {
+            se_name = p_name + 32;
+            while (i < MAX_NUM_SEED_TYPES) {
+                if (seed_collection[i].name == se_name) {
+                    seed_collection[i].amount = seed_collection[i].amount + 5;
+                }
+                i++;
+            }
+            farm_land[cse_farmer.curr_row][cse_farmer.curr_col + 1].seed_name = NO_SEED;
+            printf("  Plant '%c' was harvested, resulting in 5 '%c' seed(s)\n",
+                   p_name, se_name);
+        }
+
+
+    } else if (cse_farmer.curr_dir == '<' &&
+               cse_farmer.curr_col != 0) {
+        i = 0;
+        p_name = farm_land[cse_farmer.curr_row][cse_farmer.curr_col - 1].seed_name;
+        if (p_name < 'a' && p_name != NO_SEED) {
+            se_name = p_name + 32;
+            while (i < MAX_NUM_SEED_TYPES) {
+                if (seed_collection[i].name == se_name) {
+                    seed_collection[i].amount = seed_collection[i].amount + 5;
+                }
+                i++;
+            }
+            farm_land[cse_farmer.curr_row][cse_farmer.curr_col - 1].seed_name = NO_SEED;
+            printf("  Plant '%c' was harvested, resulting in 5 '%c' seed(s)\n",
+                   p_name, se_name);
+        }
+
+    } else if (cse_farmer.curr_dir == 'v' &&
+               cse_farmer.curr_row != LAND_SIZE - 1) {
+        i = 0;
+        p_name = farm_land[cse_farmer.curr_row + 1][cse_farmer.curr_col].seed_name;
+        if (p_name < 'a' && p_name != NO_SEED) {
+            se_name = p_name + 32;
+            while (i < MAX_NUM_SEED_TYPES) {
+                if (seed_collection[i].name == se_name) {
+                    seed_collection[i].amount = seed_collection[i].amount + 5;
+                }
+                i++;
+            }
+            farm_land[cse_farmer.curr_row + 1][cse_farmer.curr_col].seed_name = NO_SEED;
+            printf("  Plant '%c' was harvested, resulting in 5 '%c' seed(s)\n",
+                   p_name, se_name);
+        }
+
+    } else if (cse_farmer.curr_dir == '^' &&
+               cse_farmer.curr_row != 0) {
+        i = 0;
+        p_name = farm_land[cse_farmer.curr_row][cse_farmer.curr_col].seed_name;
+        if (p_name < 'a' && p_name != NO_SEED) {
+            se_name = p_name + 32;
+            while (i < MAX_NUM_SEED_TYPES) {
+                if (seed_collection[i].name == se_name) {
+                    seed_collection[i].amount = seed_collection[i].amount + 5;
+                }
+                i++;
+            }
+            farm_land[cse_farmer.curr_row - 1][cse_farmer.curr_col].seed_name = NO_SEED;
+            printf("  Plant '%c' was harvested, resulting in 5 '%c' seed(s)\n",
+                   p_name, se_name);
+        }
+    }
+}
+void next_day (struct seeds seed_collection[MAX_NUM_SEED_TYPES],
+               struct land farm_land[LAND_SIZE][LAND_SIZE]) {
+    int row = 0;
+    while (row < LAND_SIZE) {
+        int col = 0;
+        while (col < LAND_SIZE) {
+            if (farm_land[row][col].is_watered == TRUE &&
+
+                farm_land[row][col].seed_name != NO_SEED) {
+                int a = farm_land[row][col].seed_name;
+                farm_land[row][col].seed_name = a - 32;
+                farm_land[row][col].is_watered = FALSE;
+
+            } else {
+
+                farm_land[row][col].seed_name = NO_SEED;
+
+            }
+            col++;
+        }
+        row++;
+    }
+
+}
+
+void square_watering (int wat_size, struct farmer cse_farmer,
+                      struct land farm_land[LAND_SIZE][LAND_SIZE]) {
+
+    int h_wat_row = cse_farmer.curr_row - wat_size;
+    int e_wat_row = cse_farmer.curr_row + wat_size;
+
+    int h_wat_col = cse_farmer.curr_col - wat_size;
+    int e_wat_col = cse_farmer.curr_col + wat_size;
+
+    int row = 0;
+    while (row < LAND_SIZE) {
+        int col = 0;
+        while (col < LAND_SIZE) {
+            if (row >= h_wat_row && row <= e_wat_row) {
+                if (col >= h_wat_col && col <= e_wat_col) {
+                    farm_land[row][col].is_watered = 1;
+                }
+            }
+            col++;
+        }
+        row++;
+    }
+}
 
 
 // Prints the structs land (including locating where the

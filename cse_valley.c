@@ -53,6 +53,9 @@ void next_day (struct seeds seed_collection[MAX_NUM_SEED_TYPES],
 void harvest (struct seeds seed_collection[MAX_NUM_SEED_TYPES],
               struct land farm_land[LAND_SIZE][LAND_SIZE],
               struct farmer cse_farmer);
+void trade (struct seeds seed_collection[MAX_NUM_SEED_TYPES],
+            char src_name, int src_amt, char dst_name,
+            int seed_struct_num, int pre_exist);
 
 int main(void) {
 
@@ -72,10 +75,7 @@ int main(void) {
 
     // TODO: Scan the number of different seeds here!
     // Note: Please remove all TODO's in your submission (including this comment)
-    // int seed_type_num, seed_aver_num;
-    // scanf(" %d\n", &seed_type_num);
-    // seed_aver_num = 60 / seed_type_num;
-
+    
     int seed_struct_num = 0;
     int seed_type_num, seed_aver_num;
     //struct seeds seed_collection[MAX_NUM_SEED_TYPES] = {0};
@@ -327,7 +327,38 @@ int main(void) {
             char dst_name;
             scanf(" %c", &src_name);
             scanf(" %d", &src_amt);
-            scanf(" %d", &dst_name);
+            scanf(" %c", &dst_name);
+            int pre_exist = 0;
+            int t = 0;
+            while (t < MAX_NUM_SEED_TYPES) {
+                if (dst_name == seed_collection[t].name) {
+                    pre_exist = 1;
+                 }
+                t++;
+            }
+            if (pre_exist == 0) {
+                seed_struct_num++;
+
+                trade (seed_collection, src_name, src_amt,
+                       dst_name, seed_struct_num, pre_exist);
+            } else {
+                trade (seed_collection, src_name, src_amt,
+                       dst_name, seed_struct_num, pre_exist);
+            }
+
+        } else if (cmd_loop == 'd') {
+
+            char disaster_type;
+            scanf(" %c", disaster_type);
+            if (disaster_type == 'd') {
+                int min_num_plants_to_die;
+                scanf(" %d", min_num_plants_to_die);
+
+
+            } else if (disaster_type == 'w'){
+
+
+            }
 
         }
 
@@ -348,26 +379,72 @@ int main(void) {
 //
 //
 // }
+void drought(struct land farm_land[LAND_SIZE][LAND_SIZE], int min_num_plants_to_die,
+             struct seeds seed_collection[MAX_NUM_SEED_TYPES]) {
+
+}
 
 void trade (struct seeds seed_collection[MAX_NUM_SEED_TYPES],
-            char src_name, int src_amt, char dst_name) {
+            char src_name, int src_amt, char dst_name,
+            int seed_struct_num, int pre_exist) {
+
     int i = 0;
-
-    while (i < MAX_NUM_SEED_TYPES && ) {
+    int k = 0;
+    int ori_seed = 0;
+    while (i < MAX_NUM_SEED_TYPES && k == 0) {
         if (src_name == seed_collection[i].name) {
-            int k = 1;
-        } else {
-            k = 0;
-        }
-        if (k = 0) {
-
-            printf("  You don't have the seeds to be traded\n");
-
-        } else if () {
-
+            ori_seed = 1;
+            k = 1;
         }
         i++;
     }
+
+    if (('z' < src_name || src_name < 'a') ||
+        ('z' < dst_name || dst_name < 'a')) {
+
+        printf("  Seed name has to be a lowercase letter\n");
+
+    } else if (src_amt < 0) {
+
+        printf("  You can't trade negative seeds\n");
+
+    } else if (ori_seed == 0) {
+
+        printf("  You don't have the seeds to be traded\n");
+
+    } else if (seed_collection[i - 1].amount < src_amt) {
+
+        printf("  You don't have enough seeds to be traded\n");
+
+    } else if (pre_exist == 0) {
+
+        int j = 0;
+        int l = seed_struct_num;
+        seed_collection[i - 1].amount = seed_collection[i - 1].amount - src_amt;
+        while (j < seed_struct_num && (l - 2) >= 0) {
+            seed_collection[l - 1].name = seed_collection[l - 2].name;
+            seed_collection[l - 1].amount = seed_collection[l - 2].amount;
+            j++;
+            l--;
+        }
+        seed_collection[0].name = dst_name;
+        seed_collection[0].amount = src_amt;
+
+    } else if (pre_exist == 1){
+        k = 0;
+        int dst = 0;
+        int end = 0;
+        while (k < MAX_NUM_SEED_TYPES && end == 0) {
+            if (dst_name == seed_collection[dst].name) {
+                end = 1;
+            }
+            k++;
+            dst++;
+        }
+        seed_collection[i - 1].amount = seed_collection[i - 1].amount - src_amt;
+        seed_collection[dst - 1].amount = seed_collection[dst - 1].amount + src_amt;
+    }
+
 }
 
 
